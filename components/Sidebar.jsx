@@ -2,7 +2,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Home, Plus, List, LogOut, Menu, X } from "lucide-react";
+import { Home, Plus, List, LogOut, Menu, X, Compass } from "lucide-react";
 
 export default function Sidebar({ activeRoute }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -10,6 +10,7 @@ export default function Sidebar({ activeRoute }) {
 
   const navItems = [
     { href: "/dashboard", label: "Dashboard", icon: Home },
+    { href: "/listings", label: "Explore", icon: Compass },
     { href: "/dashboard/create-listing", label: "Create Listing", icon: Plus },
     { href: "/dashboard/my-listings", label: "My Listings", icon: List },
   ];
