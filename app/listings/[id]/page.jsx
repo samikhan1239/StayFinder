@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Image from "next/image";
 import BookingForm from "../../../components/BookingForm";
+import ItineraryPlanner from "../../../components/ItineraryPlanner"; // NEW IMPORT
 import {
   Star,
   Heart,
@@ -271,11 +272,11 @@ export default function ListingDetails() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Property Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
             {property.title}
           </h1>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4 text-sm">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 text-sm">
               <div className="flex items-center space-x-1">
                 <Star className="w-4 h-4 text-yellow-400 fill-current" />
                 <span className="font-medium">{property.rating}</span>
@@ -303,7 +304,7 @@ export default function ListingDetails() {
 
         {/* Image Gallery */}
         <div className="relative rounded-2xl overflow-hidden mb-8">
-          <div className="relative w-full h-96">
+          <div className="relative w-full h-64 sm:h-80 md:h-96">
             <Image
               src={property.images[currentImageIndex]}
               alt={property.title}
@@ -315,21 +316,21 @@ export default function ListingDetails() {
             <>
               <button
                 onClick={() => handleImageChange("prev")}
-                className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-50 rounded-full p-2 hover:bg-opacity-75 transition-all"
+                className="absolute left-2 sm:left-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-50 rounded-full p-2 hover:bg-opacity-75 transition-all"
               >
-                <ChevronLeft className="w-6 h-6 text-gray-800" />
+                <ChevronLeft className="w-5 sm:w-6 h-5 sm:h-6 text-gray-800" />
               </button>
               <button
                 onClick={() => handleImageChange("next")}
-                className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-50 rounded-full p-2 hover:bg-opacity-75 transition-all"
+                className="absolute right-2 sm:right-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-50 rounded-full p-2 hover:bg-opacity-75 transition-all"
               >
-                <ChevronRight className="w-6 h-6 text-gray-800" />
+                <ChevronRight className="w-5 sm:w-6 h-5 sm:h-6 text-gray-800" />
               </button>
-              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+              <div className="absolute bottom-2 sm:bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-1 sm:space-x-2">
                 {property.images.map((_, index) => (
                   <div
                     key={index}
-                    className={`w-2 h-2 rounded-full ${
+                    className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ${
                       index === currentImageIndex ? "bg-white" : "bg-gray-400"
                     }`}
                   />
@@ -339,25 +340,23 @@ export default function ListingDetails() {
           )}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-12">
           {/* Main Content */}
-          <div className="lg:col-span-2 space-y-8">
+          <div className="md:col-span-2 space-y-6 md:space-y-8">
             {/* Property Info */}
-            <div className="border-b border-gray-200 pb-8">
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <div className="flex items-center space-x-2 text-gray-600 mt-1">
-                    <span>{property.details.guests} guests</span>
-                    <span>•</span>
-                    <span>{property.details.bedrooms} bedrooms</span>
-                    <span>•</span>
-                    <span>{property.details.beds} beds</span>
-                    <span>•</span>
-                    <span>{property.details.bathrooms} bathrooms</span>
-                  </div>
+            <div className="border-b border-gray-200 pb-6 md:pb-8">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div className="flex flex-wrap items-center gap-2 text-gray-600 text-sm sm:text-base">
+                  <span>{property.details.guests} guests</span>
+                  <span>•</span>
+                  <span>{property.details.bedrooms} bedrooms</span>
+                  <span>•</span>
+                  <span>{property.details.beds} beds</span>
+                  <span>•</span>
+                  <span>{property.details.bathrooms} bathrooms</span>
                 </div>
                 <div className="flex items-center space-x-3">
-                  <div className="relative w-12 h-12">
+                  <div className="relative w-10 h-10 sm:w-12 sm:h-12">
                     <Image
                       src={property.host.avatar}
                       alt={property.host.name}
@@ -376,25 +375,27 @@ export default function ListingDetails() {
             </div>
 
             {/* Description */}
-            <div className="border-b border-gray-200 pb-8">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">
+            <div className="border-b border-gray-200 pb-6 md:pb-8">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">
                 About this place
               </h3>
-              <p className="text-gray-700 leading-relaxed text-lg">
+              <p className="text-gray-700 leading-relaxed text-base sm:text-lg">
                 {property.description}
               </p>
             </div>
 
             {/* Amenities */}
-            <div className="border-b border-gray-200 pb-8">
-              <h3 className="text-xl font-semibold text-gray-900 mb-6">
+            <div className="border-b border-gray-200 pb-6 md:pb-8">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4 sm:mb-6">
                 What this place offers
               </h3>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 {property.amenities.map((amenity, index) => (
                   <div key={index} className="flex items-center space-x-3">
                     <amenity.icon className="w-5 h-5 text-gray-600" />
-                    <span className="text-gray-700">{amenity.name}</span>
+                    <span className="text-gray-700 text-sm sm:text-base">
+                      {amenity.name}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -402,27 +403,30 @@ export default function ListingDetails() {
 
             {/* Reviews */}
             <div>
-              <div className="flex items-center space-x-4 mb-6">
+              <div className="flex items-center space-x-4 mb-4 sm:mb-6">
                 <div className="flex items-center space-x-1">
                   <Star className="w-5 h-5 text-yellow-400 fill-current" />
-                  <span className="text-xl font-semibold">
+                  <span className="text-lg sm:text-xl font-semibold">
                     {property.rating}
                   </span>
                 </div>
-                <span className="text-gray-500">
+                <span className="text-gray-500 text-sm sm:text-base">
                   • {property.reviews} reviews
                 </span>
               </div>
               {reviews.length === 0 ? (
-                <p className="text-gray-600 mb-6">
+                <p className="text-gray-600 mb-6 text-sm sm:text-base">
                   No reviews yet. Be the first to share your experience!
                 </p>
               ) : (
-                <div className="space-y-6">
+                <div className="space-y-4 sm:space-y-6">
                   {(showAllReviews ? reviews : reviews.slice(0, 3)).map(
                     (review) => (
-                      <div key={review._id} className="flex space-x-4">
-                        <div className="relative w-12 h-12">
+                      <div
+                        key={review._id}
+                        className="flex space-x-3 sm:space-x-4"
+                      >
+                        <div className="relative w-10 h-10 sm:w-12 sm:h-12">
                           <Image
                             src={
                               review.user.avatar ||
@@ -434,11 +438,11 @@ export default function ListingDetails() {
                           />
                         </div>
                         <div className="flex-1">
-                          <div className="flex items-center space-x-2 mb-1">
-                            <span className="font-medium text-gray-900">
+                          <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-2 mb-1">
+                            <span className="font-medium text-gray-900 text-sm sm:text-base">
                               {review.user.email}
                             </span>
-                            <span className="text-gray-500 text-sm">
+                            <span className="text-gray-500 text-xs sm:text-sm">
                               {new Date(review.createdAt).toLocaleDateString()}
                             </span>
                           </div>
@@ -446,11 +450,13 @@ export default function ListingDetails() {
                             {[...Array(review.rating || 5)].map((_, i) => (
                               <Star
                                 key={i}
-                                className="w-4 h-4 text-yellow-400 fill-current"
+                                className="w-3 sm:w-4 h-3 sm:h-4 text-yellow-400 fill-current"
                               />
                             ))}
                           </div>
-                          <p className="text-gray-700">{review.comment}</p>
+                          <p className="text-gray-700 text-sm sm:text-base">
+                            {review.comment}
+                          </p>
                         </div>
                       </div>
                     )
@@ -460,32 +466,37 @@ export default function ListingDetails() {
               {reviews.length > 3 && (
                 <button
                   onClick={() => setShowAllReviews(!showAllReviews)}
-                  className="mt-6 text-blue-600 hover:underline"
+                  className="mt-4 sm:mt-6 text-blue-600 hover:underline text-sm sm:text-base"
                 >
                   {showAllReviews ? "Show Less" : "Show All Reviews"}
                 </button>
               )}
 
               {/* Review Submission Form */}
-              <div className="mt-8 bg-white border border-gray-200 rounded-2xl shadow-lg p-6">
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">
+              <div className="mt-6 sm:mt-8 bg-white border border-gray-200 rounded-2xl shadow-lg p-4 sm:p-6">
+                <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">
                   Write a Review
                 </h3>
-                {error && <p className="text-red-500 mb-4">{error}</p>}
+                {error && (
+                  <p className="text-red-500 mb-4 text-sm sm:text-base">
+                    {error}
+                  </p>
+                )}
                 {user ? (
                   <form onSubmit={handleReviewSubmit}>
                     <div className="mb-4">
-                      <label className="block text-gray-700 mb-2">Rating</label>
+                      <label className="block text-gray-700 mb-2 text-sm sm:text-base">
+                        Rating
+                      </label>
                       <select
                         value={newReview.rating}
                         onChange={(e) =>
                           setNewReview({
                             ...newReview,
-
                             rating: Number(e.target.value),
                           })
                         }
-                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm sm:text-base"
                       >
                         {[1, 2, 3, 4, 5].map((num) => (
                           <option key={num} value={num}>
@@ -495,7 +506,7 @@ export default function ListingDetails() {
                       </select>
                     </div>
                     <div className="mb-4">
-                      <label className="block text-gray-700 mb-2">
+                      <label className="block text-gray-700 mb-2 text-sm sm:text-base">
                         Comment
                       </label>
                       <textarea
@@ -506,20 +517,20 @@ export default function ListingDetails() {
                             comment: e.target.value,
                           })
                         }
-                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                        rows="5"
+                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm sm:text-base"
+                        rows="4 sm:rows-5"
                         placeholder="Share your experience..."
                       />
                     </div>
                     <button
                       type="submit"
-                      className="bg-red-500 text-white px-6 py-2 rounded-md hover:bg-red-600 transition-all duration-200"
+                      className="bg-red-500 text-white px-4 sm:px-6 py-2 rounded-md hover:bg-red-600 transition-all duration-200 text-sm sm:text-base"
                     >
                       Submit Review
                     </button>
                   </form>
                 ) : (
-                  <p className="text-gray-600">
+                  <p className="text-gray-600 text-sm sm:text-base">
                     Please{" "}
                     <button
                       onClick={() => router.push("/login")}
@@ -534,21 +545,26 @@ export default function ListingDetails() {
             </div>
           </div>
 
-          {/* Booking Card */}
-          <div className="lg:col-span-1">
-            <div className="sticky top-32">
-              <div className="bg-white border border-gray-200 rounded-2xl shadow-xl p-6 animate-slide-up">
-                <div className="flex items-center justify-between mb-6">
+          {/* Sidebar: Booking and Itinerary */}
+          <div className="md:col-span-1 space-y-6">
+            <div className="sticky top-24">
+              {/* Booking Card */}
+              <div className="bg-white border border-gray-200 rounded-2xl shadow-xl p-4 sm:p-6 animate-slide-up">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6 gap-2">
                   <div className="flex items-center space-x-1">
-                    <span className="text-2xl font-bold text-gray-900">
+                    <span className="text-xl sm:text-2xl font-bold text-gray-900">
                       ₹{property.price}
                     </span>
-                    <span className="text-gray-500">/ night</span>
+                    <span className="text-gray-500 text-sm sm:text-base">
+                      / night
+                    </span>
                   </div>
                   <div className="flex items-center space-x-1">
                     <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                    <span className="font-medium">{property.rating}</span>
-                    <span className="text-gray-500 text-sm">
+                    <span className="font-medium text-sm sm:text-base">
+                      {property.rating}
+                    </span>
+                    <span className="text-gray-500 text-xs sm:text-sm">
                       ({property.reviews})
                     </span>
                   </div>
@@ -558,9 +574,17 @@ export default function ListingDetails() {
                   price={listing.price}
                   maxGuests={property.details.guests}
                 />
-                <p className="text-center text-sm text-gray-500 mt-4">
+                <p className="text-center text-xs sm:text-sm text-gray-500 mt-4">
                   Pay via UPI, Netbanking, or Wallet
                 </p>
+              </div>
+
+              {/* Itinerary Planner */}
+              <div className="bg-white border border-gray-200 rounded-2xl shadow-xl p-4 sm:p-6 mt-6 animate-slide-up">
+                <ItineraryPlanner
+                  location={property.location}
+                  listingId={listing._id}
+                />
               </div>
             </div>
           </div>
