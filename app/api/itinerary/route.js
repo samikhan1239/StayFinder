@@ -4,10 +4,7 @@ import { ObjectId } from "mongodb";
 
 export async function POST(req) {
   try {
-    console.log("API: Received POST /api/itinerary");
-    console.log("API: Imported generateItinerary:", typeof generateItinerary);
     const { location, preferences, listingId } = await req.json();
-    console.log("API: Request body:", { location, preferences, listingId });
 
     // Validate input
     if (!location || !preferences || !listingId) {
@@ -49,9 +46,8 @@ export async function POST(req) {
     }
 
     // Connect to MongoDB
-    console.log("API: Connecting to MongoDB...");
+
     const { db } = await connectToDatabase();
-    console.log("API: Connected to MongoDB");
 
     // Verify listing exists
     const listing = await db.collection("listings").findOne({ _id: objectId });
@@ -61,23 +57,21 @@ export async function POST(req) {
         status: 404,
       });
     }
-    console.log("API: Listing found:", listing.title);
 
     // Check cache
-    console.log("API: Checking cache...");
+
     const cache = await db.collection("itineraries").findOne({
       listingId: objectId,
       preferences: JSON.stringify(preferences),
     });
     if (cache) {
-      console.log("API: Cache hit, returning cached itinerary");
       return new Response(JSON.stringify({ itinerary: cache.itinerary }), {
         status: 200,
       });
     }
 
     // Generate new itinerary
-    console.log("API: Generating new itinerary...");
+
     if (typeof generateItinerary !== "function") {
       throw new Error("generateItinerary is not a function");
     }
@@ -88,7 +82,7 @@ export async function POST(req) {
     });
 
     // Cache the result
-    console.log("API: Caching itinerary...");
+
     await db.collection("itineraries").insertOne({
       listingId: objectId,
       preferences: JSON.stringify(preferences),
@@ -96,7 +90,6 @@ export async function POST(req) {
       createdAt: new Date(),
     });
 
-    console.log("API: Itinerary generated and cached");
     return new Response(JSON.stringify({ itinerary }), { status: 200 });
   } catch (error) {
     console.error("API: Error in /api/itinerary:", error.message, error.stack);

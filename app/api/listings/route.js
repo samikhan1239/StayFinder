@@ -3,7 +3,6 @@ import { getUserFromToken } from "../../../lib/auth";
 import { ObjectId } from "mongodb";
 
 export async function GET(req) {
-  console.log("Listings GET: Starting request at", new Date().toISOString());
   try {
     const { searchParams } = new URL(req.url);
     const location = searchParams.get("location");
@@ -18,7 +17,6 @@ export async function GET(req) {
     if (hostId) {
       try {
         query.hostId = new ObjectId(hostId);
-        console.log("Listings GET: Parsed hostId as ObjectId:", hostId);
       } catch (e) {
         console.error(
           "Listings GET: Invalid hostId format:",
@@ -31,15 +29,10 @@ export async function GET(req) {
       }
     }
 
-    console.log("Listings GET: Query:", query);
     const { db } = await connectToDatabase();
     let listings = await db.collection("listings").find(query).toArray();
 
     if (checkIn && checkOut) {
-      console.log("Listings GET: Filtering booked listings for dates:", {
-        checkIn,
-        checkOut,
-      });
       const bookedListings = await db
         .collection("bookings")
         .find({
@@ -51,13 +44,8 @@ export async function GET(req) {
         .toArray();
       const bookedIds = bookedListings.map((b) => b.listingId.toString());
       listings = listings.filter((l) => !bookedIds.includes(l._id.toString()));
-      console.log(
-        "Listings GET: Filtered out booked listings, remaining:",
-        listings.length
-      );
     }
 
-    console.log("Listings GET: Fetched listings count:", listings.length);
     return new Response(JSON.stringify(listings), { status: 200 });
   } catch (error) {
     console.error("Listings GET: Error:", error.message, error.stack);
@@ -68,25 +56,21 @@ export async function GET(req) {
 }
 
 export async function POST(req) {
-  console.log("Listings POST: Starting request at", new Date().toISOString());
   try {
     const user = await getUserFromToken(req);
-    console.log("Listings POST: User:", user);
+
     if (!user) {
-      console.log("Listings POST: No user, returning 401");
       return new Response(JSON.stringify({ message: "Unauthorized" }), {
         status: 401,
       });
     }
 
     const data = await req.json();
-    console.log("Listings POST: Request data:", data);
 
     // Validate required fields
     const { title, description, location, price, image, amenities, details } =
       data;
     if (!title || !description || !location || !price || !image) {
-      console.log("Listings POST: Missing required fields");
       return new Response(
         JSON.stringify({ message: "Missing required fields" }),
         {
@@ -95,7 +79,6 @@ export async function POST(req) {
       );
     }
     if (isNaN(parseInt(price)) || parseInt(price) <= 0) {
-      console.log("Listings POST: Invalid price:", price);
       return new Response(JSON.stringify({ message: "Invalid price" }), {
         status: 400,
       });
@@ -109,7 +92,6 @@ export async function POST(req) {
         isNaN(details.beds) ||
         isNaN(details.bathrooms))
     ) {
-      console.log("Listings POST: Invalid details:", details);
       return new Response(
         JSON.stringify({ message: "Invalid property details" }),
         {
@@ -131,7 +113,6 @@ export async function POST(req) {
       createdAt: new Date(),
     });
 
-    console.log("Listings POST: Created listing with ID:", result.insertedId);
     return new Response(
       JSON.stringify({
         message: "Listing created",

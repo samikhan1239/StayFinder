@@ -28,7 +28,6 @@ export async function POST(req) {
       createdAt: new Date(),
     });
 
-    console.log("Register: User created:", { email, name });
     return new Response(JSON.stringify({ message: "User created" }), {
       status: 201,
     });

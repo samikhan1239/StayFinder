@@ -27,10 +27,6 @@ export async function POST(req) {
       process.env.JWT_SECRET,
       { expiresIn: "30d" }
     );
-    console.log("Login: Generated token for user:", {
-      userId: user._id,
-      email,
-    });
 
     return new Response(
       JSON.stringify({

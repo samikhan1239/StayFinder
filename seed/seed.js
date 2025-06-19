@@ -42,7 +42,6 @@ async function seedDatabase() {
   ];
   await db.collection("listings").insertMany(listings);
 
-  console.log("Database seeded successfully!");
   process.exit(0);
 }
 

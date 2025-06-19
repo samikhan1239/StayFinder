@@ -94,14 +94,14 @@ export default function BookingConfirmed() {
 
   if (!booking || !listing) {
     return (
-      <div className="container mx-auto p-4">
+      <div className="container mx-auto py-20 p-4">
         <h1 className="text-2xl font-bold">Loading...</h1>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto p-4 max-w-2xl">
+    <div className="container mx-auto p-4 py-20 max-w-2xl">
       <h1 className="text-3xl font-bold text-green-500 mb-6">
         Booking Confirmed!
       </h1>

@@ -548,6 +548,13 @@ export default function ListingDetails() {
           {/* Sidebar: Booking and Itinerary */}
           <div className="md:col-span-1 space-y-6">
             <div className="sticky top-24">
+              {/* Itinerary Planner */}
+              <div className="bg-white border border-gray-200 rounded-2xl shadow-xl p-4 sm:p-6 mt-6 animate-slide-up">
+                <ItineraryPlanner
+                  location={property.location}
+                  listingId={listing._id}
+                />
+              </div>
               {/* Booking Card */}
               <div className="bg-white border border-gray-200 rounded-2xl shadow-xl p-4 sm:p-6 animate-slide-up">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6 gap-2">
@@ -577,14 +584,6 @@ export default function ListingDetails() {
                 <p className="text-center text-xs sm:text-sm text-gray-500 mt-4">
                   Pay via UPI, Netbanking, or Wallet
                 </p>
-              </div>
-
-              {/* Itinerary Planner */}
-              <div className="bg-white border border-gray-200 rounded-2xl shadow-xl p-4 sm:p-6 mt-6 animate-slide-up">
-                <ItineraryPlanner
-                  location={property.location}
-                  listingId={listing._id}
-                />
               </div>
             </div>
           </div>

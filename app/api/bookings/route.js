@@ -26,9 +26,8 @@ export async function POST(request) {
     }
 
     const user = await getUserFromToken(request);
-    console.log("Bookings POST: User:", user ? user.email : "No user");
+
     if (!user) {
-      console.log("Bookings POST: Unauthorized");
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
@@ -43,19 +42,7 @@ export async function POST(request) {
       email,
       phone,
     } = await request.json();
-    console.log("Bookings POST: Received request:", {
-      listingId,
-      checkIn,
-      checkOut,
-      price,
-      guests,
-      firstName,
-      lastName,
-      email,
-      phone,
-    });
 
-    // Validate inputs
     if (
       !listingId ||
       !checkIn ||
@@ -77,16 +64,14 @@ export async function POST(request) {
       if (!lastName) missingFields.push("lastName");
       if (!email) missingFields.push("email");
       if (!phone) missingFields.push("phone");
-      console.log("Bookings POST: Missing fields:", missingFields);
+
       return NextResponse.json(
         { message: "Missing required fields", missingFields },
         { status: 400 }
       );
     }
 
-    // Validate ObjectId
     if (!ObjectId.isValid(listingId)) {
-      console.log("Bookings POST: Invalid listingId:", listingId);
       return NextResponse.json(
         { message: "Invalid listing ID format" },
         { status: 400 }
@@ -95,7 +80,6 @@ export async function POST(request) {
 
     // Validate email format
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      console.log("Bookings POST: Invalid email:", email);
       return NextResponse.json(
         { message: "Invalid email format" },
         { status: 400 }
@@ -104,7 +88,6 @@ export async function POST(request) {
 
     // Validate phone (Indian phone number, 10 digits)
     if (!/^[6-9]\d{9}$/.test(phone)) {
-      console.log("Bookings POST: Invalid phone:", phone);
       return NextResponse.json(
         {
           message:
@@ -115,7 +98,6 @@ export async function POST(request) {
     }
 
     if (!Number.isInteger(price) || price < 100) {
-      console.log("Bookings POST: Invalid price:", price);
       return NextResponse.json(
         { message: "Price must be at least ₹100" },
         { status: 400 }
@@ -123,7 +105,6 @@ export async function POST(request) {
     }
 
     if (!Number.isInteger(guests) || guests < 1) {
-      console.log("Bookings POST: Invalid guests:", guests);
       return NextResponse.json(
         { message: "Guests must be at least 1" },
         { status: 400 }
@@ -136,7 +117,6 @@ export async function POST(request) {
     today.setHours(0, 0, 0, 0);
 
     if (isNaN(checkInDate) || isNaN(checkOutDate)) {
-      console.log("Bookings POST: Invalid dates:", { checkIn, checkOut });
       return NextResponse.json(
         { message: "Invalid date format" },
         { status: 400 }
@@ -144,7 +124,6 @@ export async function POST(request) {
     }
 
     if (checkInDate < today) {
-      console.log("Bookings POST: Check-in date in past:", checkIn);
       return NextResponse.json(
         { message: "Check-in date cannot be in the past" },
         { status: 400 }
@@ -152,7 +131,6 @@ export async function POST(request) {
     }
 
     if (checkOutDate <= checkInDate) {
-      console.log("Bookings POST: Invalid date range:", { checkIn, checkOut });
       return NextResponse.json(
         { message: "Check-out date must be after check-in date" },
         { status: 400 }
@@ -166,7 +144,6 @@ export async function POST(request) {
       .collection("listings")
       .findOne({ _id: new ObjectId(listingId) });
     if (!listing) {
-      console.log("Bookings POST: Listing not found:", listingId);
       return NextResponse.json(
         { message: "Listing not found" },
         { status: 404 }
@@ -175,10 +152,6 @@ export async function POST(request) {
 
     const maxGuests = listing.details?.guests || 6;
     if (guests > maxGuests) {
-      console.log("Bookings POST: Too many guests:", {
-        guests,
-        max: maxGuests,
-      });
       return NextResponse.json(
         { message: `Maximum ${maxGuests} guests allowed` },
         { status: 400 }
@@ -202,10 +175,6 @@ export async function POST(request) {
       .toArray();
 
     if (existingBookings.length > 0) {
-      console.log(
-        "Bookings POST: Overlapping bookings found:",
-        existingBookings.length
-      );
       return NextResponse.json(
         { message: "Selected dates are not available" },
         { status: 409 }
@@ -215,25 +184,20 @@ export async function POST(request) {
     // Create Razorpay order
     let order;
     try {
-      // Shorten receipt to fit within 40 characters
-      const shortListingId = listingId.slice(-8); // Last 8 chars of listingId
-      const shortTimestamp = Date.now().toString().slice(-6); // Last 6 chars of timestamp
-      const receipt = `book_${shortListingId}_${shortTimestamp}`; // e.g., book_62998cb7_890123 (~20 chars)
-      console.log("Bookings POST: Generated receipt:", receipt, {
-        length: receipt.length,
-      });
+      const shortListingId = listingId.slice(-8);
+      const shortTimestamp = Date.now().toString().slice(-6);
+      const receipt = `book_${shortListingId}_${shortTimestamp}`;
 
       order = await razorpay.orders.create({
-        amount: price * 100, // Convert to paise
+        amount: price * 100,
         currency: "INR",
         receipt,
-        payment_capture: 1, // Auto-capture
+        payment_capture: 1,
         notes: {
           listingId: listingId.toString(),
           userId: user._id.toString(),
         },
       });
-      console.log("Bookings POST: Razorpay order created:", order.id);
     } catch (razorpayError) {
       console.error(
         "Bookings POST: Razorpay order creation failed:",
@@ -263,8 +227,6 @@ export async function POST(request) {
       payment_status: "created",
       createdAt: new Date(),
     });
-
-    console.log("Bookings POST: Booking created with ID:", result.insertedId);
 
     return NextResponse.json(
       {
@@ -306,26 +268,20 @@ export async function PUT(request) {
     }
 
     const user = await getUserFromToken(request);
-    console.log("Bookings PUT: User:", user ? user.email : "No user");
+
     if (!user) {
-      console.log("Bookings PUT: Unauthorized");
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
     const { bookingId, razorpay_payment_id, razorpay_signature } =
       await request.json();
-    console.log("Bookings PUT: Received request:", {
-      bookingId,
-      razorpay_payment_id,
-      razorpay_signature,
-    });
 
     if (!bookingId || !razorpay_payment_id || !razorpay_signature) {
       const missingFields = [];
       if (!bookingId) missingFields.push("bookingId");
       if (!razorpay_payment_id) missingFields.push("razorpay_payment_id");
       if (!razorpay_signature) missingFields.push("razorpay_signature");
-      console.log("Bookings PUT: Missing fields:", missingFields);
+
       return NextResponse.json(
         { message: "Missing required fields", missingFields },
         { status: 400 }
@@ -340,10 +296,6 @@ export async function PUT(request) {
       userId: new ObjectId(user._id),
     });
     if (!booking) {
-      console.log(
-        "Bookings PUT: Booking not found or unauthorized:",
-        bookingId
-      );
       return NextResponse.json(
         { message: "Booking not found or unauthorized" },
         { status: 404 }
@@ -358,7 +310,6 @@ export async function PUT(request) {
       .digest("hex");
 
     if (generatedSignature !== razorpay_signature) {
-      console.log("Bookings PUT: Invalid Razorpay signature");
       return NextResponse.json(
         { message: "Invalid payment signature" },
         { status: 400 }
@@ -379,17 +330,11 @@ export async function PUT(request) {
     );
 
     if (updateResult.matchedCount === 0) {
-      console.log("Bookings PUT: Failed to update booking:", bookingId);
       return NextResponse.json(
         { message: "Failed to update booking" },
         { status: 500 }
       );
     }
-
-    console.log(
-      "Bookings PUT: Booking confirmed with payment ID:",
-      razorpay_payment_id
-    );
 
     return NextResponse.json(
       { message: "Booking confirmed successfully" },

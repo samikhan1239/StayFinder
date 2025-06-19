@@ -11,36 +11,25 @@ export async function POST(req) {
       razorpay_signature,
     } = await req.json();
 
-    console.log("Payment confirm request:", {
-      bookingId,
-      razorpay_payment_id,
-      razorpay_order_id,
-      razorpay_signature,
-    });
-
     // Validate inputs
     if (!bookingId) {
-      console.log("Missing bookingId");
       return new Response(JSON.stringify({ message: "Missing bookingId" }), {
         status: 400,
       });
     }
     if (!razorpay_payment_id) {
-      console.log("Missing razorpay_payment_id");
       return new Response(
         JSON.stringify({ message: "Missing razorpay_payment_id" }),
         { status: 400 }
       );
     }
     if (!razorpay_order_id) {
-      console.log("Missing razorpay_order_id");
       return new Response(
         JSON.stringify({ message: "Missing razorpay_order_id" }),
         { status: 400 }
       );
     }
     if (!razorpay_signature) {
-      console.log("Missing razorpay_signature");
       return new Response(
         JSON.stringify({ message: "Missing razorpay_signature" }),
         { status: 400 }
@@ -53,7 +42,6 @@ export async function POST(req) {
     const generatedSignature = hmac.digest("hex");
 
     if (generatedSignature !== razorpay_signature) {
-      console.log("Invalid payment signature");
       return new Response(
         JSON.stringify({ message: "Invalid payment signature" }),
         { status: 400 }
@@ -76,7 +64,6 @@ export async function POST(req) {
     );
 
     if (result.modifiedCount === 0) {
-      console.log("Booking not found or already confirmed:", bookingId);
       return new Response(
         JSON.stringify({ message: "Booking not found or already confirmed" }),
         { status: 400 }
@@ -87,7 +74,6 @@ export async function POST(req) {
       status: 200,
     });
   } catch (error) {
-    console.error("Payment confirmation error:", error);
     return new Response(JSON.stringify({ message: "Something went wrong" }), {
       status: 500,
     });

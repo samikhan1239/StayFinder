@@ -271,33 +271,39 @@ export default function BookingForm({ listingId, price, listing }) {
   return (
     <div>
       {/* Progress Steps */}
-      <div className="mb-12">
-        <div className="flex items-center justify-center space-x-8">
+      <div className="mb-12 px-4 md:px-0">
+        <div className="flex flex-wrap justify-center gap-8">
           {steps.map((step, index) => (
             <div key={step.number} className="flex items-center">
+              {/* Circle Step */}
               <div
-                className={`flex items-center justify-center w-10 h-10 rounded-full border-2 ${
+                className={`flex items-center justify-center w-10 h-10 rounded-full border-2 transition-all duration-300 ${
                   step.completed
                     ? "bg-green-500 border-green-500 text-white"
                     : currentStep === step.number
                     ? "bg-red-500 border-red-500 text-white"
                     : "border-gray-300 text-gray-400"
-                }`}
+                } shadow-md`}
               >
                 {step.completed ? <Check className="w-5 h-5" /> : step.number}
               </div>
+
+              {/* Step Title */}
               <span
-                className={`ml-3 font-medium ${
+                className={`ml-3 text-sm md:text-base font-semibold transition-colors duration-300 ${
                   currentStep >= step.number ? "text-gray-900" : "text-gray-400"
                 }`}
               >
                 {step.title}
               </span>
+
+              {/* Progress Line */}
               {index < steps.length - 1 && (
                 <div
-                  className={`flex-1 h-1 mx-4 ${
+                  className={`h-1 flex-grow mx-4 transition-all duration-300 rounded-full ${
                     currentStep > step.number ? "bg-green-500" : "bg-gray-300"
                   }`}
+                  style={{ minWidth: "40px" }}
                 />
               )}
             </div>
